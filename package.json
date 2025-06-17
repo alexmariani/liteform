@@ -1,0 +1,41 @@
+{
+    "name": "lite-form",
+    "version": "0.0.1",
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "author": "am.codes",
+    "license": "MIT",
+    "main": "dist/lite-form.cjs.js",
+    "module": "dist/lite-form.es.js",
+    "types": "dist/types/index.d.ts",
+    "exports": {
+        ".": {
+            "require": "./dist/lite-form.cjs.js",
+            "import": "./dist/lite-form.es.js",
+            "types": "./dist/types/index.d.ts"
+        }
+    },
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite",
+        "preview": "vite preview"
+    },
+    "peerDependencies": {
+        "react": "^19.1.0"
+    },
+    "sideEffects": false,
+    "devDependencies": {
+        "@types/react": "^19.1.6",
+        "react": "^19.1.0",
+        "typescript": "^5.8.3",
+        "vite": "^6.3.5",
+        "vite-plugin-dts": "^4.5.4"
+    },
+    "files": [
+        "dist",
+        "src",
+        "README.md"
+    ]
+}
