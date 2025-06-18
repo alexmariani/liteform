@@ -48,7 +48,7 @@ export function useForm<T extends Record<string, any>>(options?: UseFormOptions<
             const { validators } = fieldConfig!;
 
             if (!validators || validators.length == 0) {
-                return null
+                return null;
             }
 
             for (const validator of validators) {
@@ -72,7 +72,6 @@ export function useForm<T extends Record<string, any>>(options?: UseFormOptions<
 
     const validateAll = useCallback(() => {
         const nextErrors: Partial<Record<keyof T, string>> = {};
-
         for (const name in schema) {
             const val = values[name as keyof T];
 
@@ -80,17 +79,16 @@ export function useForm<T extends Record<string, any>>(options?: UseFormOptions<
             const { validators } = fieldConfig!;
 
             if (!validators || validators.length == 0) {
-                return {};
+                continue;
             }
+
             for (const validator of validators) {
                 const result = validator(val!);
                 if (result) {
                     nextErrors[name as keyof T] = result;
-                    break;
                 }
             }
         }
-
         setErrors(nextErrors);
         return nextErrors;
     }, [schema, values]);
@@ -103,25 +101,27 @@ export function useForm<T extends Record<string, any>>(options?: UseFormOptions<
         setTouched({});
     }, []);
 
-
     const handleSubmit = useCallback(
-        (onValid: (data: T) => void, onInvalid?: (errors: Partial<Record<keyof T, string>>) => void) => {
-            return (e: React.FormEvent) => {
+        (
+            onValid: (data: T) => void,
+            onInvalid?: (errors: Partial<Record<keyof T, string>>) => void
+        ): React.FormEventHandler<HTMLFormElement> =>
+            (e) => {
                 e.preventDefault();
                 setIsSubmitted(false);
                 const validation = validateAll();
-                if (!validation || Object.keys(validation).length === 0) {
+                if (Object.keys(validation).length === 0) {
                     onValid(values as T);
                 } else {
                     onInvalid?.(validation);
                 }
                 setIsSubmitted(true);
-            };
-        },
+            },
         [values, validateAll]
     );
 
-  
+
+
 
 
     const registerField = useCallback(
@@ -131,7 +131,7 @@ export function useForm<T extends Record<string, any>>(options?: UseFormOptions<
             const isCheckbox = typeof value === "boolean";
 
             return {
-                name: String(name), // React <input> si aspetta string per name
+                name: String(name),
                 ...(isCheckbox
                     ? {
                         checked: value,

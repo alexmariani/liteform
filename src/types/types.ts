@@ -40,7 +40,10 @@ export interface FormState<TValues> {
     setFormValue: (body: TValues) => void;
     setFieldTouched: <K extends keyof TValues>(name: K, touched: boolean) => void;
     validateField: (name: keyof TValues) => string | null;
-    handleSubmit: (onValid: (data: TValues) => void, onInvalid?: (errors: any) => void) => void;
+    handleSubmit: (
+        onValid: (data: TValues) => void,
+        onInvalid?: (errors: Partial<Record<keyof TValues, string>>) => void
+    ) => React.FormEventHandler<HTMLFormElement>;
     validateAll: () => Partial<Record<keyof TValues, string>>
     resetForm: () => void;
 }
