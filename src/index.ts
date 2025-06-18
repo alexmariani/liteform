@@ -8,3 +8,4 @@ export * from "./context/FormContext";
 export * from "./types/types";
 
 export * from "./utils/ValidationUtil"
+export { default as validators } from './utils/ValidationUtil';
