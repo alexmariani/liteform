@@ -1,14 +1,12 @@
 {
-    "name": "lite-form",
-    "version": "0.0.1",
+    "name": "react-litest-form",
+    "version": "0.0.8",
     "repository": {
         "type": "git",
-        "url": ""
+        "url": "https://github.com/alexmariani/liteform"
     },
     "author": "am.codes",
     "license": "MIT",
-    "main": "dist/lite-form.cjs.js",
-    "module": "dist/lite-form.es.js",
     "types": "dist/types/index.d.ts",
     "exports": {
         ".": {
@@ -17,6 +15,7 @@
             "types": "./dist/types/index.d.ts"
         }
     },
+    "module": "dist/lite-form.es.js",
     "scripts": {
         "build": "vite build",
         "dev": "vite",

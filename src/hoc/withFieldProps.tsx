@@ -1,13 +1,12 @@
 import React from "react";
 import { useField } from "../hooks/useField";
-import { useForm } from "../hooks/useForm";
-import { FieldConfig } from "../types/types";
+import { FormState } from "../types/types";
 
 export function withFieldProps<T extends string>(
   Component: React.ComponentType<any>,
-  form: ReturnType<typeof useForm>,
-  config: FieldConfig<T>
+  form: FormState<T>,
+  key: keyof T
 ) {
-  const props = useField<T>(form, config);
+  const props = useField<T>(form, key);
   return <Component {...props} />;
 }

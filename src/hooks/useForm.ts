@@ -1,17 +1,17 @@
 import { useState, useCallback } from "react";
-import { FormState, Validator } from "../types/types";
+import { FieldConfig, FormState, Validator } from "../types/types";
 
 type ValidationMode = "onSubmit" | "onBlur" | "onChange";
 
 interface UseFormOptions<T> {
     validationMode?: ValidationMode;
-    schema?: Partial<Record<keyof T, Validator<T[keyof T]>[]>>;
+    schema?: Partial<Record<keyof T, FieldConfig<T[keyof T]>>>;
 }
 
 export function useForm<T extends Record<string, any>>(options?: UseFormOptions<T>) {
     const {
         validationMode = "onSubmit",
-        schema = {} as Partial<Record<keyof T, Validator<T[keyof T]>[]>>
+        schema = {} as Partial<Record<keyof T, FieldConfig<T[keyof T]>>>
     } = options ?? {};
 
     const [values, setValues] = useState<Partial<T>>({});
@@ -44,7 +44,12 @@ export function useForm<T extends Record<string, any>>(options?: UseFormOptions<
     const validateField = useCallback(
         (name: keyof T, value?: T[keyof T]) => {
             const val = value !== undefined ? value : values[name];
-            const validators = schema[name] || [];
+            const fieldConfig = schema[name as keyof T];
+            const { validators } = fieldConfig!;
+
+            if (!validators || validators.length == 0) {
+                return null
+            }
 
             for (const validator of validators) {
                 const result = validator(val!);
@@ -70,8 +75,13 @@ export function useForm<T extends Record<string, any>>(options?: UseFormOptions<
 
         for (const name in schema) {
             const val = values[name as keyof T];
-            const validators = schema[name as keyof T] || [];
 
+            const fieldConfig = schema[name as keyof T];
+            const { validators } = fieldConfig!;
+
+            if (!validators || validators.length == 0) {
+                return {};
+            }
             for (const validator of validators) {
                 const result = validator(val!);
                 if (result) {
@@ -100,7 +110,7 @@ export function useForm<T extends Record<string, any>>(options?: UseFormOptions<
                 e.preventDefault();
                 setIsSubmitted(false);
                 const validation = validateAll();
-                if (Object.keys(validation).length === 0) {
+                if (!validation || Object.keys(validation).length === 0) {
                     onValid(values as T);
                 } else {
                     onInvalid?.(validation);
@@ -111,17 +121,35 @@ export function useForm<T extends Record<string, any>>(options?: UseFormOptions<
         [values, validateAll]
     );
 
+  
+
+
     const registerField = useCallback(
         (name: keyof T) => {
+            const value = values[name];
+
+            const isCheckbox = typeof value === "boolean";
+
             return {
-                name,
-                value: values[name] ?? "",
-                checked: typeof values[name] === "boolean" ? values[name] : undefined,
-                onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+                name: String(name), // React <input> si aspetta string per name
+                ...(isCheckbox
+                    ? {
+                        checked: value,
+                    }
+                    : {
+                        value: value !== undefined && value !== null ? String(value) : "",
+                    }),
+                onChange: (
+                    e: React.ChangeEvent<
+                        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+                    >
+                ) => {
                     const target = e.target;
-                    const val = target.type === "checkbox"
-                        ? (target as HTMLInputElement).checked
-                        : target.value;
+                    const val =
+                        target.type === "checkbox"
+                            ? (target as HTMLInputElement).checked
+                            : target.value;
+
                     setFieldValue(name, val as T[keyof T]);
                 },
                 onBlur: () => setFieldTouched(name, true),
@@ -129,6 +157,7 @@ export function useForm<T extends Record<string, any>>(options?: UseFormOptions<
         },
         [values, setFieldValue, setFieldTouched]
     );
+
 
 
 
