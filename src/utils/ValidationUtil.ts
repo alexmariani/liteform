@@ -54,7 +54,31 @@ const validators = {
         return (cfRegex.test(value) || pivaRegex.test(value))
             ? null
             : "Il campo deve essere un codice fiscale (16 caratteri) o una partita IVA (11 cifre) valida";
+    },
+
+    min: (min: number) => (value: unknown) => {
+        if (!value) {
+            return "Il campo è obbligatorio";
+        }
+        const currentValue = +value;
+        if (currentValue < min) {
+            return "Il valore deve essere maggiore o uguale a " + min;
+        }
+        return null;
+    },
+
+    max: (max: number) => (value: unknown) => {
+        if (!value) {
+            return "Il campo è obbligatorio";
+        }
+        const currentValue = +value;
+        if (currentValue > max) {
+            return "Il valore deve essere minore o uguale a " + max;
+        }
+        return null;
     }
+
+
 };
 
 
